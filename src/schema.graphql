@@ -184,57 +184,79 @@ interface ActivityEvent @entity {
   vault: Vault!
   source: Bytes
   type: ActivityEventType!
+  user: User
+  mintedIds: [BigInt!]!
+  redeemedIds: [BigInt!]!
+  specificIds: [BigInt!]!
+  targetCount: BigInt!
+  randomCount: BigInt!
+  nftIds: [BigInt!]
+  amounts: [BigInt!]
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
+# This entity dublicates all data from ActivityEvent entity
 type Mint implements ActivityEvent @entity {
   id: ID! # tx
   date: BigInt!
-  user: User!
   vault: Vault!
-  nftIds: [BigInt!]
-  amounts: [BigInt!]
-  feeReceipt: FeeReceipt!
-  zapAction: ZapSell @derivedFrom(field: "vaultAction")
   source: Bytes
   type: ActivityEventType!
+  user: User
+  mintedIds: [BigInt!]! #null
+  redeemedIds: [BigInt!]! #null
+  specificIds: [BigInt!]!
+  targetCount: BigInt! #null
+  randomCount: BigInt! #null
+  nftIds: [BigInt!]
+  amounts: [BigInt!] #null
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 type Swap implements ActivityEvent @entity {
   id: ID! # tx
   date: BigInt!
-  user: User!
   vault: Vault!
+  source: Bytes
+  type: ActivityEventType!
+  user: User
   mintedIds: [BigInt!]!
-  mintedAmounts: [BigInt!]!
-  redeemedIds: [BigInt!]!
+  redeemedIds: [BigInt!]! #null
   specificIds: [BigInt!]!
   targetCount: BigInt!
   randomCount: BigInt!
-  feeReceipt: FeeReceipt!
-  zapAction: ZapSwap @derivedFrom(field: "vaultAction")
-  source: Bytes
-  type: ActivityEventType!
+  nftIds: [BigInt!] #null
+  amounts: [BigInt!]
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 type Redeem implements ActivityEvent @entity {
   id: ID! # tx
   date: BigInt!
-  user: User!
   vault: Vault!
-  nftIds: [BigInt!]!
+  source: Bytes
+  type: ActivityEventType!
+  user: User
+  mintedIds: [BigInt!]! #null
+  redeemedIds: [BigInt!]! #null
   specificIds: [BigInt!]!
   targetCount: BigInt!
   randomCount: BigInt!
-  feeReceipt: FeeReceipt!
-  zapAction: ZapBuy @derivedFrom(field: "vaultAction")
-  source: Bytes
-  type: ActivityEventType!
+  nftIds: [BigInt!]
+  amounts: [BigInt!] #null
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 type User @entity {
   id: ID! # address
   mints: [Mint!]! @derivedFrom(field: "user")
   redeems: [Redeem!]! @derivedFrom(field: "user")
+  # If needed end user will be able ty filter activity events by type field
+  ActivityEvents: [ActivityEvent!]! @derivedFrom(field: "user")
 }
 
 type StakedLpUser @entity {
@@ -263,6 +285,16 @@ type Deposit implements ActivityEvent @entity {
   deposit: BigInt!
   source: Bytes
   type: ActivityEventType!
+  user: User #Clarify
+  mintedIds: [BigInt!]! 
+  redeemedIds: [BigInt!]! 
+  specificIds: [BigInt!]!
+  targetCount: BigInt!
+  randomCount: BigInt!
+  nftIds: [BigInt!]
+  amounts: [BigInt!] 
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 type Withdrawal implements ActivityEvent @entity {
@@ -274,6 +306,16 @@ type Withdrawal implements ActivityEvent @entity {
   withdrawal: BigInt!
   source: Bytes
   type: ActivityEventType!
+  user: User #Clarify
+  mintedIds: [BigInt!]! 
+  redeemedIds: [BigInt!]! 
+  specificIds: [BigInt!]!
+  targetCount: BigInt!
+  randomCount: BigInt!
+  nftIds: [BigInt!]
+  amounts: [BigInt!] 
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 type VaultCreated implements ActivityEvent @entity {
@@ -282,6 +324,16 @@ type VaultCreated implements ActivityEvent @entity {
   vault: Vault!
   source: Bytes
   type: ActivityEventType!
+  user: User #Clarify
+  mintedIds: [BigInt!]! 
+  redeemedIds: [BigInt!]!
+  specificIds: [BigInt!]!
+  targetCount: BigInt!
+  randomCount: BigInt!
+  nftIds: [BigInt!]
+  amounts: [BigInt!] 
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 
@@ -291,6 +343,16 @@ type VaultPublished implements ActivityEvent @entity {
   vault: Vault!
   source: Bytes
   type: ActivityEventType!
+  user: User
+  mintedIds: [BigInt!]! 
+  redeemedIds: [BigInt!]! 
+  specificIds: [BigInt!]!
+  targetCount: BigInt!
+  randomCount: BigInt!
+  nftIds: [BigInt!]
+  amounts: [BigInt!]
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 type VaultShutdown implements ActivityEvent @entity {
@@ -299,6 +361,21 @@ type VaultShutdown implements ActivityEvent @entity {
   vault: Vault!
   source: Bytes
   type: ActivityEventType!
+  id: ID! # tx
+  date: BigInt!
+  vault: Vault!
+  source: Bytes
+  type: ActivityEventType!
+  user: User
+  mintedIds: [BigInt!]!
+  redeemedIds: [BigInt!]!
+  specificIds: [BigInt!]!
+  targetCount: BigInt!
+  randomCount: BigInt!
+  nftIds: [BigInt!]
+  amounts: [BigInt!]
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 type VaultNameChange implements ActivityEvent @entity {
@@ -311,6 +388,16 @@ type VaultNameChange implements ActivityEvent @entity {
   vault: Vault!
   source: Bytes
   type: ActivityEventType!
+  user: User
+  mintedIds: [BigInt!]!
+  redeemedIds: [BigInt!]!
+  specificIds: [BigInt!]!
+  targetCount: BigInt!
+  randomCount: BigInt!
+  nftIds: [BigInt!]
+  amounts: [BigInt!]
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 type VaultFeeUpdate implements ActivityEvent @entity {
@@ -324,6 +411,16 @@ type VaultFeeUpdate implements ActivityEvent @entity {
   vault: Vault!
   source: Bytes
   type: ActivityEventType!
+  user: User
+  mintedIds: [BigInt!]! #null
+  redeemedIds: [BigInt!]! #null
+  specificIds: [BigInt!]!
+  targetCount: BigInt!
+  randomCount: BigInt!
+  nftIds: [BigInt!]
+  amounts: [BigInt!] #null
+  feeReceipt: FeeReceipt
+  zapAction: ZapAction @derivedFrom(field: "vaultAction")
 }
 
 
