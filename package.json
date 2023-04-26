@@ -35,6 +35,6 @@
   },
   "version": "1.3.3",
   "main": "index.js",
-  "repository": "git@github.com:NFTX-project/nftx-v2-subgraph.git",
+  "repository": "git@github.com:Graphrica-Team-Fortune/nftx-v2-subgraph",
   "author": "Caps <caps@nftx.org>"
 }
