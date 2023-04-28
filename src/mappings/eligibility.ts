@@ -6,42 +6,80 @@ import {
 
 import { getEligibilityModule, updateEligibleTokenIds } from './helpers';
 
+/**
+ * Handles the UniqueEligibilitiesSet event
+ * @param event - the UniqueEligibilitiesSet event object
+ */
 export function handleUniqueEligibilitiesSet(
   event: UniqueEligibilitiesSetEvent,
 ): void {
-  let moduleAddress = event.address;
-  let module = getEligibilityModule(moduleAddress);
+  try {
+    const moduleAddress = event.address;
+    let module = getEligibilityModule(moduleAddress);
 
-  let instance = EligibilityModuleContract.bind(moduleAddress);
-  let finalizedFromInstance = instance.try_finalized();
-  let finalized = finalizedFromInstance.reverted
-    ? module.finalizedOnDeploy
-    : finalizedFromInstance.value;
+    // Check if module exists. If not, create a new instance.
+    if (!module) {
+      module = new EligibilityModule();
+      module.address = moduleAddress;
+      module.finalizedOnDeploy = false;
+      module.finalized = false;
+      module.eligibleTokenIds = [];
+      module.eligibleRange = [];
+    }
 
-  module.finalized = finalized;
+    // Get the finalized state of the module
+    const instance = EligibilityModuleContract.bind(moduleAddress);
+    const finalizedFromInstance = instance.try_finalized();
+    const finalized = finalizedFromInstance.reverted
+      ? module.finalizedOnDeploy
+      : finalizedFromInstance.value;
 
-  module = updateEligibleTokenIds(
-    module,
-    event.params.tokenIds,
-    event.params.isEligible,
-  );
+    // Update module properties
+    module.finalized = finalized;
+    module = updateEligibleTokenIds(
+      module,
+      event.params.tokenIds,
+      event.params.isEligible,
+    );
 
-  module.save();
+    // Save updated module instance
+    module.save();
+  } catch (error) {
+    log.error(`Error handling UniqueEligibilitiesSet event: ${error}`);
+  }
 }
 
+/**
+ * Handles the RangeSet event
+ * @param event - the RangeSet event object
+ */
 export function handleRangeSet(event: RangeSetEvent): void {
-  let moduleAddress = event.address;
-  let module = getEligibilityModule(moduleAddress);
+  try {
+    const moduleAddress = event.address;
+    let module = getEligibilityModule(moduleAddress);
 
-  let instance = EligibilityModuleContract.bind(moduleAddress);
-  let finalizedFromInstance = instance.try_finalized();
-  let finalized = finalizedFromInstance.reverted
-    ? module.finalizedOnDeploy
-    : finalizedFromInstance.value;
+    // Check if module exists. If not, create a new instance.
+    if (!module) {
+      module = new EligibilityModule();
+      module.address = moduleAddress;
+      module.finalizedOnDeploy = false;
+      module.finalized = false;
+      module.eligibleTokenIds = [];
+      module.eligibleRange = [];
+    }
 
-  module.finalized = finalized;
+    // Get the finalized state of the module
+    const instance = EligibilityModuleContract.bind(moduleAddress);
+    const finalizedFromInstance = instance.try_finalized();
+    const finalized = finalizedFromInstance.reverted
+      ? module.finalizedOnDeploy
+      : finalizedFromInstance.value;
 
-  module.eligibleRange = [event.params.rangeStart, event.params.rangeEnd];
+    // Update module properties
+    module.finalized = finalized;
+    module.eligibleRange = [event.params.rangeStart, event.params.rangeEnd];
 
-  module.save();
-}
+    // Save updated module instance
+    module.save();
+  } catch (error) {
+    log.error(`Error handling RangeSet event
