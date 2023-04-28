@@ -22,9 +22,15 @@ export function handleBuyZap(event: BuyZapEvent): void {
   redeem.type = "ZapBuy";
   redeem.save();
 
-  zapBuy.ethAmount = event.params.ethSpent;
-  zapBuy.vaultAction = redeem.id;
-  zapBuy.save();
+  try {
+    let ethAmount = event.params.ethSpent;
+    let vaultAction = redeem.id;
+    zapBuy.ethAmount = ethAmount;
+    zapBuy.vaultAction = vaultAction;
+    zapBuy.save();
+  } catch (error) {
+    log.error("Error in handleBuyZap: {}", error.toString());
+  }
 }
 
 export function handleSellZap(event: SellZapEvent): void {
@@ -35,9 +41,15 @@ export function handleSellZap(event: SellZapEvent): void {
   mint.type = "ZapSell";
   mint.save();
 
-  zapSell.ethAmount = event.params.ethReceived;
-  zapSell.vaultAction = mint.id;
-  zapSell.save();
+  try {
+    let ethAmount = event.params.ethReceived;
+    let vaultAction = mint.id;
+    zapSell.ethAmount = ethAmount;
+    zapSell.vaultAction = vaultAction;
+    zapSell.save();
+  } catch (error) {
+    log.error("Error in handleSellZap: {}", error.toString());
+  }
 }
 
 export function handleSwapZap(event: SwapZapEvent): void {
@@ -48,7 +60,13 @@ export function handleSwapZap(event: SwapZapEvent): void {
   swap.type = "ZapSwap";
   swap.save();
 
-  zapSwap.ethAmount = event.params.ethSpent;
-  zapSwap.vaultAction = swap.id;
-  zapSwap.save();
+  try {
+    let ethAmount = event.params.ethSpent;
+    let vaultAction = swap.id;
+    zapSwap.ethAmount = ethAmount;
+    zapSwap.vaultAction = vaultAction;
+    zapSwap.save();
+  } catch (error) {
+    log.error("Error in handleSwapZap: {}", error.toString());
+  }
 }
